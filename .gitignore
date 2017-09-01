@@ -1,0 +1,4 @@
+# Not Relevant to the source code
+node_modules
+npm-debug.log
+doc
