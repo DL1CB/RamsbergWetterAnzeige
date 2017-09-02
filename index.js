@@ -29,7 +29,13 @@ port.on('open', function() {
 
 function updateDisplay(){
 
-wunderground.conditions().request('Germany/Pleinfeld', function(err, response){
+wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
+
+    if(err){
+      console.log('error',err)
+      return
+    }
+    console.log(response)
 
     var time = new Date(response.current_observation.local_time_rfc822)
     var hours = time.getHours().toString()
