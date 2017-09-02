@@ -31,11 +31,7 @@ function updateDisplay(){
 
 wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
 
-    if(err){
-      console.log('error',err)
-      return
-    }
-    console.log(response)
+  //console.log(response)
 
     var time = new Date(response.current_observation.local_time_rfc822)
     var hours = time.getHours().toString()
@@ -72,6 +68,11 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
 
     wind_beaufort = wind_beaufort.toString()
 
+    if(wind_beaufort.length < 2){
+      wind_beaufort = '0'+wind_beaufort
+    }
+
+
 
     // correct wind to round value, e.g 1.1 -> 1
     //wind_kph = Math.abs(wind_kph)
@@ -101,17 +102,17 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
     // convert wind_degrees to string
     var val = Math.floor((wind_degrees / 22.5) + 0.5);
     var arr = ["__N", "NNE", "_NE", "ENE", "__E", "ESE", "_SE", "SSE", "__S", "SSW", "_SW", "WSW", "__W", "WNW", "_NW", "NNW"];
-    wind_degrees = arr[(val % 16)];
+    var wind_dir = arr[(val % 16)];
 
     console.log('hours \t\t',hours);
     console.log('minutes \t',minutes);
-    console.log('wind_degrees \t', wind_degrees)
+    console.log('wind_dir \t', wind_dir)
     //console.log('wind_kph \t',wind_kph);
     console.log('wind_beaufort \t',wind_beaufort);
     console.log('temp_c \t\t',temp_c);
     console.log('pressure_mb \t',pressure_mb);
 
-    var datastring = hours+minutes+wind_degrees+wind_beaufort+temp_c+pressure_mb
+    var datastring = hours+minutes+wind_dir+wind_beaufort+temp_c+pressure_mb
 
     const buf = Buffer.from(datastring+'\r\n', 'ascii');
 
