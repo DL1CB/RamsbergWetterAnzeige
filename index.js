@@ -4,7 +4,7 @@ var Wunderground = require('wundergroundnode');
 var wunderground = new Wunderground(config.key);
 
 var SerialPort = require('serialport');
-var port = new SerialPort(config.serialport, { autoOpen: false });
+var port = new SerialPort(config.serialport, { autoOpen: false ,baudRate:19200});
 
 // Open errors will be emitted as an error event
 port.on('error', function(err) {
@@ -123,7 +123,6 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
         return console.log('Error on write: ', err.message);
       }
     })
-
 
   })
 }
