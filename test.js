@@ -20,17 +20,19 @@ port.open(function (err) {
 port.on('open', function() {
 
   const start = Buffer.from([0x2]);
-  const time = Buffer.from('1234', 'ascii');
-  const temp = Buffer.from('18', 'ascii');
+  const timea = Buffer.from('1', 'ascii');
+  const colon = Buffer.from([0x9F]);
+  const timeb = Buffer.from('231', 'ascii');
+
+  const temp = Buffer.from('18°C', 'ascii');
   const press = Buffer.from('1020', 'ascii');
-  const water = Buffer.from('16', 'ascii');
-  const wind = Buffer.from('12', 'ascii');
-  const pegel = Buffer.from('5432', 'ascii');
+  const water = Buffer.from('16°C', 'ascii');
+  const wind = Buffer.from(' 1', 'ascii');
+  const pegel = Buffer.from('    ', 'ascii');
   const dir = Buffer.from('NO', 'ascii');
   const end = Buffer.from([0x3]);
 
-
-  const buf = Buffer.concat([start,time,temp,press,water,wind,pegel,dir,end]);
+  const buf = Buffer.concat([start,timea,colon,timeb,temp,press,water,wind,pegel,dir,end]);
 
   console.log('writing ascii',buf);
 
@@ -38,6 +40,7 @@ port.on('open', function() {
     if (err) {
       return console.log('Error on write: ', err.message);
     }
+    setTimeout(function(){},3000)
   })
 
 })

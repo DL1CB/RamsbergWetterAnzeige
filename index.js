@@ -29,9 +29,9 @@ port.on('open', function() {
 
 function updateDisplay(){
 
-wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
+wunderground.conditions().request('PWS:IPLEINFE3', function(err, response){
 
-  //console.log(response)
+    console.log(response)
 
     var time = new Date(response.current_observation.local_time_rfc822)
     var hours = time.getHours().toString()
@@ -43,7 +43,7 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
 
     // correct Hours to 2 characters
     if(hours.length < 2){
-      hours = '0'+hours
+      hours = ' '+hours
     }
 
     // correct minutes to 2 characters
@@ -69,7 +69,7 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
     wind_beaufort = wind_beaufort.toString()
 
     if(wind_beaufort.length < 2){
-      wind_beaufort = '0'+wind_beaufort
+      wind_beaufort = ' '+wind_beaufort
     }
 
 
@@ -91,7 +91,7 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
 
     // correct temp_c to 2 characters
     if(temp_c.length < 2){
-      temp_c = '0'+temp_c
+      temp_c = ' '+temp_c
     }
 
     // correct wind_degrees
@@ -101,7 +101,7 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
 
     // convert wind_degrees to string
     var val = Math.floor((wind_degrees / 22.5) + 0.5);
-    var arr = ["__N", "NNE", "_NE", "ENE", "__E", "ESE", "_SE", "SSE", "__S", "SSW", "_SW", "WSW", "__W", "WNW", "_NW", "NNW"];
+    var arr = [" N", "NE", "NE", "NE", " E", "SE", "SE", "SE", " S", "SW", "SW", "SW", " W", "NW", "NW", "NW"];
     var wind_dir = arr[(val % 16)];
 
     console.log('hours \t\t',hours);
@@ -112,11 +112,19 @@ wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
     console.log('temp_c \t\t',temp_c);
     console.log('pressure_mb \t',pressure_mb);
 
-    var datastring = hours+minutes+wind_dir+wind_beaufort+temp_c+pressure_mb
+    //var datastring = hours+minutes+wind_dir+wind_beaufort+temp_c+pressure_mb
 
-    const buf = Buffer.from(datastring+'\r\n', 'ascii');
+    const start = Buffer.from([0x2]);
+    const timea = Buffer.from(hours+minutes, 'ascii');
+    const temp = Buffer.from(temp_c+'°C', 'ascii');
+    const press = Buffer.from(pressure_mb, 'ascii');
+    const water = Buffer.from('    ', 'ascii');
+    const wind = Buffer.from(wind_beaufort, 'ascii');
+    const pegel = Buffer.from('    ', 'ascii');
+    const dir = Buffer.from(wind_dir, 'ascii');
+    const end = Buffer.from([0x3]);
 
-    console.log('writing ascii',buf.toString('ascii'));
+    const buf = Buffer.concat([start,timea,temp,press,water,wind,pegel,dir,end]);
 
     port.write(buf,'ascii',function(err) {
       if (err) {
