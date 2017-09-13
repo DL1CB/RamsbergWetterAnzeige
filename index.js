@@ -136,7 +136,7 @@ function getWeatherData(){
       // convert wind_degrees to string
       var val = Math.floor((wind_degrees / 22.5) + 0.5);
       var arr = [" N", "NE", "NE", "NE", " E", "SE", "SE", "SE", " S", "SW", "SW", "SW", " W", "NW", "NW", "NW"];
-      var wind_dir = arr[(val % 16)];
+      wind_dir = arr[(val % 16)];
 
       console.log('-- Updating Weather Received from wunderground.com:')
       console.log('wind_dir \t', wind_dir)
