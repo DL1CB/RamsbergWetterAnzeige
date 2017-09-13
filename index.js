@@ -62,6 +62,16 @@ function getCurrentTime(){
   hours = currentTime.getHours().toString()
   minutes= currentTime.getMinutes().toString()
 
+	// correct hours to 2 chracters
+	if(hours.lenght < 2 ){
+		hours = ' '+hours
+	}
+
+	// correct minutes to 2 characters
+	if(minutes.lenght < 2){
+		minutes = ' '+minutes
+	}
+
   console.log('-- Updating Time')
 
   console.log('hours \t\t',hours);
@@ -92,16 +102,6 @@ function getWeatherData(){
       wind_kph = response.current_observation.wind_kph
       temp_c = response.current_observation.temp_c
       pressure_mb = response.current_observation.pressure_mb.substr(0,4)
-
-      // correct Hours to 2 characters
-      if(hours.length < 2){
-        hours = ' '+hours
-      }
-
-      // correct minutes to 2 characters
-      if(minutes.length < 2){
-        minutes = '0'+minutes
-      }
 
       if(wind_kph < 0 || wind_kph == undefined) return 0;
 
