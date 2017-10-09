@@ -12,13 +12,12 @@ var wind_beaufort = '0'
 var temp_c = 0
 var pressure_mb = '0000'
 
-
 var displayInUpdate = false
-
 
 var wunderground = new Wunderground(config.key);
 
 var SerialPort = require('serialport');
+
 
 var port = new SerialPort(config.serialport, { autoOpen: false ,baudRate:19200});
 
@@ -51,29 +50,28 @@ port.on('open', function() {
     getWeatherData()
   },180000)
 
+
 })
-
-
 
 function getCurrentTime(){
 
-  var currentTime = new Date()
+  var currentTime = new Date('2017-10-09T04:23:45.936Z')
 
   hours = currentTime.getHours().toString()
   minutes= currentTime.getMinutes().toString()
 
 	// correct hours to 2 chracters
-	if(hours.lenght < 2 ){
+	if(hours.length < 2 ){
+  console.log('correct hours',hours.length)
 		hours = ' '+hours
 	}
 
 	// correct minutes to 2 characters
-	if(minutes.lenght < 2){
+	if(minutes.length < 2){
 		minutes = ' '+minutes
 	}
 
   console.log('-- Updating Time')
-
   console.log('hours \t\t',hours);
   console.log('minutes \t',minutes);
 
@@ -98,21 +96,19 @@ function getWeatherData(){
         return
       }
 
-      wind_degrees = response.current_observation.wind_degrees
-      wind_kph = response.current_observation.wind_kph
-      temp_c = response.current_observation.temp_c
-      pressure_mb = response.current_observation.pressure_mb.substr(0,4)
 
       if(wind_kph < 0 || wind_kph == undefined) return 0;
 
+      // conversion kph to beaufort scale
       var kmhLimits = [1,6,11,19,30,39,50,61,74,87,102,117,177,249,332,418,512];
-
       wind_beaufort = kmhLimits.reduce(function(previousValue, currentValue, index, array) {
         return previousValue + (wind_kph > currentValue ? 1 : 0);
       },0);
 
       wind_beaufort = wind_beaufort.toString()
 
+
+      // correct wind_beaufort to 2 characters
       if(wind_beaufort.length < 2){
         wind_beaufort = ' '+wind_beaufort
       }
@@ -127,6 +123,7 @@ function getWeatherData(){
       if(temp_c.length < 2){
         temp_c = ' '+temp_c
       }
+
 
       // correct wind_degrees
       if(wind_degrees < 0){
@@ -166,7 +163,7 @@ function updateDisplay(){
 
     const buf = Buffer.concat([start,timea,temp,press,water,wind,pegel,dir,end]);
 
-    console.log('-- Writing Data to Display')
+    console.log('-- Writing Data to Display:', buf.length)
     console.log(buf.toString())
 
     port.write(buf,'ascii',function(err) {
@@ -177,5 +174,6 @@ function updateDisplay(){
       displayInUpdate = false
 
     })
+
 
 }
