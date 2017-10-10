@@ -46,6 +46,7 @@ port.on('open', function() {
   console.log('Ramsberg Weather Display Driver')
 
   getCurrentTime()
+  getWaterData()
   getWeatherData()
 
   // Get Current Time and Update Display every 20 seconds
@@ -57,6 +58,12 @@ port.on('open', function() {
   setInterval(function(){
     getWeatherData()
   },180000)
+
+  // Get Current Weather and Update Display every 1,5 minutes
+  setInterval(function(){
+    getWaterData()
+  },90000)
+
 
 
 })
