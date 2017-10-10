@@ -10,6 +10,7 @@
   "author": "Chris Bentley <chris.bentley@wireup.io> (http://wireup.io/)",
   "license": "ISC",
   "dependencies": {
+    "html-scrape": "^0.2.0",
     "serialport": "^5.0.0",
     "wundergroundnode": "^0.11.0"
   }

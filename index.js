@@ -231,7 +231,7 @@ function updateDisplay(){
     const timea = Buffer.from(hours+minutes, 'ascii');
     const temp = Buffer.from(temp_c+'°C', 'ascii');
     const press = Buffer.from(pressure_mb, 'ascii');
-    const water = Buffer.from(wasser_c, 'ascii');
+    const water = Buffer.from(wasser_c+'°C', 'ascii');
     const wind = Buffer.from(wind_beaufort, 'ascii');
     const pegel = Buffer.from(wasser_nn, 'ascii');
     const dir = Buffer.from(wind_dir, 'ascii');
