@@ -1,6 +1,12 @@
 // Author: Chris Bentley DL1C(at)DARC.DE +49 173 7070 2569
 var config = require('./config')
 var Wunderground = require('wundergroundnode');
+var scrape = require('html-scrape');
+
+var elements = {
+	title: { start: 'Brombachsee', end: '&nbsp' },
+}
+
 
 // weather station data
 var hours = '00'
@@ -11,6 +17,8 @@ var wind_kph = 0
 var wind_beaufort = '0'
 var temp_c = 0
 var pressure_mb = '0000'
+var wasser_c = '    '
+var wasser_nn = '  '
 
 var displayInUpdate = false
 
@@ -146,6 +154,66 @@ function getWeatherData(){
     })
 }
 
+function getWaterData(){
+
+  scrape ('http://www.gkd.bayern.de/seen/wassertemperatur/karten/index.php?thema=gkd&rubrik=seen&produkt=wassertemperatur&gknr=0', elements, function (error, data) {
+  	if (error) {
+  		console.log(error);
+  	} else {
+
+      wasser_c = Number(data.title.substring(data.title.lastIndexOf('>')+1).replace(',','.'))
+
+      wasser_c = Math.abs(wasser_c)
+      wasser_c = Math.round(wasser_c)
+      wasser_c = wasser_c.toString()
+      wasser_c = wasser_c.substr(0,2)
+
+      // correct temp_c to 2 characters
+      if(wasser_c.length < 2){
+        wasser_c = ' '+wasser_c
+      }
+
+      console.log('wasser_c',wasser_c)
+
+
+
+  	}
+  });
+
+  scrape ('http://www.gkd.bayern.de/seen/wasserstand/karten/index.php?thema=gkd&rubrik=seen&produkt=wasserstand&gknr=0', elements, function (error, data) {
+  	if (error) {
+  		console.log(error);
+  	} else {
+
+      wasser_nn = Number(data.title.substring(data.title.lastIndexOf('>')+1).replace(',','.'))
+
+      wasser_nn = Math.abs(wasser_nn)
+      wasser_nn = Math.round(wasser_nn)
+      wasser_nn = wasser_nn.toString()
+      wasser_nn = wasser_nn.substr(0,3)
+
+      if(wasser_nn.length < 2){
+        wasser_nn = '   '+wasser_nn
+      }
+
+      if(wasser_nn.length < 3){
+        wasser_nn = '  '+wasser_nn
+      }
+
+      if(wasser_nn.length < 4){
+        wasser_nn = ' '+wasser_nn
+      }
+
+      updateDisplay()
+
+      console.log('wasser_nn',wasser_nn)
+  	}
+  });
+
+
+
+}
+
 function updateDisplay(){
 
     if(displayInUpdate == true){ return }
@@ -156,9 +224,9 @@ function updateDisplay(){
     const timea = Buffer.from(hours+minutes, 'ascii');
     const temp = Buffer.from(temp_c+'°C', 'ascii');
     const press = Buffer.from(pressure_mb, 'ascii');
-    const water = Buffer.from('    ', 'ascii');
+    const water = Buffer.from(wasser_c, 'ascii');
     const wind = Buffer.from(wind_beaufort, 'ascii');
-    const pegel = Buffer.from('    ', 'ascii');
+    const pegel = Buffer.from(wasser_nn, 'ascii');
     const dir = Buffer.from(wind_dir, 'ascii');
     const end = Buffer.from([0x3]);
 
