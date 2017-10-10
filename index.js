@@ -55,7 +55,8 @@ port.on('open', function() {
 
 function getCurrentTime(){
 
-  var currentTime = new Date('2017-10-09T04:23:45.936Z')
+  //var currentTime = new Date('2017-10-09T04:23:45.936Z')
+  var currentTime = new Date()
 
   hours = currentTime.getHours().toString()
   minutes= currentTime.getMinutes().toString()
