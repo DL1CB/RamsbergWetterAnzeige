@@ -64,12 +64,12 @@ function getCurrentTime(){
 	// correct hours to 2 chracters
 	if(hours.length < 2 ){
   console.log('correct hours',hours.length)
-		hours = ' '+hours
+		hours = '0'+hours
 	}
 
 	// correct minutes to 2 characters
 	if(minutes.length < 2){
-		minutes = ' '+minutes
+		minutes = '0'+minutes
 	}
 
   console.log('-- Updating Time')
