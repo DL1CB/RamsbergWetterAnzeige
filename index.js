@@ -17,8 +17,8 @@ var wind_kph = 0
 var wind_beaufort = '0'
 var temp_c = 0
 var pressure_mb = '0000'
-var wasser_c = '    '
-var wasser_nn = '  '
+var wasser_c = '00'
+var wasser_nn = '0000'
 
 var displayInUpdate = false
 
@@ -59,10 +59,10 @@ port.on('open', function() {
     getWeatherData()
   },180000)
 
-  // Get Current Weather and Update Display every 1,5 minutes
+  // Get Current Weather and Update Display every 30 minutes
   setInterval(function(){
     getWaterData()
-  },90000)
+  },1800000)
 
 
 
@@ -210,8 +210,6 @@ function getWaterData(){
       if(wasser_nn.length < 4){
         wasser_nn = ' '+wasser_nn
       }
-
-      updateDisplay()
 
       console.log('wasser_nn',wasser_nn)
   	}
