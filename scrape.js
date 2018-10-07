@@ -375,10 +375,6 @@ function run (){
 
 }
 
-
-run()
-
-/*
 var SerialPort = require('serialport');
 var port = new SerialPort(config.serialport, { autoOpen: false ,baudRate:19200});
 
@@ -398,7 +394,7 @@ port.open(function (err) {
     return console.log('Error opening port: ', err.message);
   }
 });
-*/
+
 
 
 
