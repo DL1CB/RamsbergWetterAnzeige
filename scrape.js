@@ -386,7 +386,7 @@ port.on('error', function(err) {
 // The open event is always emitted
 port.on('open', function() {
   console.log('starting...')
-  
+  run()
 })
 
 port.open(function (err) {
