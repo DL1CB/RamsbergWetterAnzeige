@@ -4,7 +4,8 @@
   "description": "RamsbergWetterAnseige",
   "main": "main.js",
   "scripts": {
-    "start": "node ./src/main.js",
+    "start": "pm2 start ./src/main.js",
+    "test": "node ./src/main.js",
     "startup": "apt update && apt install sudo curl && curl -sL https://raw.githubusercontent.com/Unitech/pm2/master/packager/setup.deb.sh | sudo -E bash -"
   },
   "author": "Chris Bentley <chris.bentley@wireup.io> (http://wireup.io/)",
