@@ -3,7 +3,7 @@
 
 ## About
 
-This is the software to drive the Weather informaiton
+This is the software to drive the weather informaiton
 display at Ramsberg Harbour. A wifi enabled Raspberry Pi B+,
 with a USB-RS485 serial dongle is used to push serial 
 data to the display every 10 seconds.
@@ -14,13 +14,15 @@ Weather data comes from two sources:
 
 The data is then prepared for serialization to the display
 
-## access the raspberry
+##Installation
+
+###Access the raspberry
 
 These instructions are for a raspberrypi b+
 
 ssh into raspberry 
 
-## install
+###Install
 
 sudo apt update
 
@@ -35,7 +37,7 @@ npm install
 npm test    #to see that it works
 
 
-## Additional steps for production install
+###Additional steps for production install
 
 sudo npm -g install pm2    # install the process manager, so your application can run as a daemon
 
@@ -50,6 +52,8 @@ sudo reboot                # reboot the raspberry pi and login
 
 pm2 list                   # see that the app is in the list of processes 
 
+... youre done!
 
-
-
+Chris Bently
+DL1CB@DARC.de
++491737072569
