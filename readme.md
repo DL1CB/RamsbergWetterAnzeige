@@ -51,8 +51,6 @@ sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -
 
 npm start                  # add the app as a daemon to the process manager
 
-pm2 save                   # save the running processes, that when the system reboots, they are re-initialized
-
 sudo reboot                # reboot the raspberry pi and login
 
 pm2 list                   # see that the app is in the list of processes 
