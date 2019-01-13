@@ -14,15 +14,17 @@ Weather data comes from two sources:
 
 The data is then prepared for serialization to the display
 
-##Installation
+## Installation
 
-###Access the raspberry
+### Access the raspberry
 
 These instructions are for a raspberrypi b+
 
 ssh into raspberry 
 
-###Install
+### Install
+
+```python
 
 sudo apt update
 
@@ -36,8 +38,11 @@ npm install
 
 npm test    #to see that it works
 
+```
 
-###Additional steps for production install
+### Additional steps for production install
+
+```python
 
 sudo npm -g install pm2    # install the process manager, so your application can run as a daemon
 
@@ -51,6 +56,8 @@ pm2 save                   # save the running processes, that when the system re
 sudo reboot                # reboot the raspberry pi and login
 
 pm2 list                   # see that the app is in the list of processes 
+
+```
 
 ... youre done!
 
