@@ -2,10 +2,12 @@
 var config = require('./config')
 var scrape = require('html-scrape');
 var asciitable = require('asciitable');
-var Wunderground = require('wundergroundnode');
-var wunderground = new Wunderground(config.key);  
+var request = require('request');
 
 console.log('Ramsberg Wetter Anzeige')
+
+var SerialPort = require('serialport');
+var port = new SerialPort(config.serialport, { autoOpen: true ,baudRate:19200});
 
 weatherdata =  {
     hours : '00',
@@ -19,8 +21,7 @@ weatherdata =  {
 }
 
 
-var SerialPort = require('serialport');
-var port = new SerialPort(config.serialport, { autoOpen: true ,baudRate:19200});
+
 
 function printweather(weatherdata){
 
@@ -139,71 +140,76 @@ function getWasser_nn(weatherdata) {
 
 function getWunderground(weatherdata){
 
-    wunderground.conditions().request('PWS:IPLEINFE4', function(err, response){
-  
+  var url = 'http://api.weather.com/v2/pws/observations/current?stationId=IPLEINFE4&format=json&units=m&apiKey=876777051d264fe8a777051d263fe850'
+
+  request(url, function (error, response, body) {
+    var json = false;
+    if (!error && response.statusCode === 200) {
+        error = false;
         try {
-  
-          wind_degrees = response.current_observation.wind_degrees
-          wind_kph = response.current_observation.wind_kph
-          temp_c = response.current_observation.temp_c
-          pressure_mb = response.current_observation.pressure_mb.substr(0,4)
-  
-          //console.log(wind_degrees,wind_kph,temp_c,pressure_mb)
 
-        } catch (e) {
-          console.log(e)
-          return
-        }
-  
-    
-        if(wind_degrees < 0){
+          json = JSON.parse(body);
+
+          observation = json.observations[0]
+
+          wind_degrees = observation.winddir
+          wind_kph = observation.metric.windSpeed
+          temp_c = observation.metric.temp
+          pressure_mb = String(observation.metric.pressure).substr(0,4)
+
+          
+          if(wind_degrees < 0){
             wind_degrees=0
-        }
+          }
   
-        // convert wind_degrees to string
-        var val = Math.floor((wind_degrees / 22.5) + 0.5);
-        var arr = [" N", "NE", "NE", "NE", " E", "SE", "SE", "SE", " S", "SW", "SW", "SW", " W", "NW", "NW", "NW"];
-        wind_dir = arr[(val % 16)];
-  
-        weatherdata.wind_dir = wind_dir
+          // convert wind_degrees to string
+          var val = Math.floor((wind_degrees / 22.5) + 0.5);
+          var arr = [" N", "NE", "NE", "NE", " E", "SE", "SE", "SE", " S", "SW", "SW", "SW", " W", "NW", "NW", "NW"];
+          wind_dir = arr[(val % 16)];
     
-        
-        if(wind_kph < 0 || wind_kph == undefined) return 0;
-  
-        // conversion kph to beaufort scale
-        var kmhLimits = [1,6,11,19,30,39,50,61,74,87,102,117,177,249,332,418,512];
-        wind_beaufort = kmhLimits.reduce(function(previousValue, currentValue, index, array) {
-          return previousValue + (wind_kph > currentValue ? 1 : 0);
-        },0);
-  
-        wind_beaufort = wind_beaufort.toString()
-  
-        // correct wind_beaufort to 2 characters
-        if(wind_beaufort.length < 2){
-          wind_beaufort = ' '+wind_beaufort
-        }
-
-        weatherdata.wind_beaufort = wind_beaufort
-
-        // correct wind to temp_c value, e.g 1.1 -> 1
-        temp_c = Math.abs(temp_c)
-        temp_c = Math.round(temp_c)
-        temp_c = temp_c.toString()
-        temp_c = temp_c.substr(0,2)
-  
-        // correct temp_c to 2 characters
-        if(temp_c.length < 2){
-          temp_c = ' '+temp_c
-        }
-
-        weatherdata.temp_c = temp_c
+          weatherdata.wind_dir = wind_dir
+      
+          
+          if(wind_kph < 0 || wind_kph == undefined) return 0;
     
-        weatherdata.pressure_mb = pressure_mb
-  
-    })
-}
+          // conversion kph to beaufort scale
+          var kmhLimits = [1,6,11,19,30,39,50,61,74,87,102,117,177,249,332,418,512];
+          wind_beaufort = kmhLimits.reduce(function(previousValue, currentValue, index, array) {
+            return previousValue + (wind_kph > currentValue ? 1 : 0);
+          },0);
+    
+          wind_beaufort = wind_beaufort.toString()
+    
+          // correct wind_beaufort to 2 characters
+          if(wind_beaufort.length < 2){
+            wind_beaufort = ' '+wind_beaufort
+          }
 
-//var SerialPort = require('serialport');
+          weatherdata.wind_beaufort = wind_beaufort
+
+          // correct wind to temp_c value, e.g 1.1 -> 1
+          temp_c = Math.abs(temp_c)
+          temp_c = Math.round(temp_c)
+          temp_c = temp_c.toString()
+          temp_c = temp_c.substr(0,2)
+    
+          // correct temp_c to 2 characters
+          if(temp_c.length < 2){
+            temp_c = ' '+temp_c
+          }
+
+          weatherdata.temp_c = temp_c
+          weatherdata.pressure_mb = pressure_mb
+      
+        } catch (err) {
+            console.error('Exception caught in JSON.parse', body);
+            console.log(err)
+            error = err;
+        }
+    } // if 
+  }) // funtion
+} // wunder
+
 
 function updateDisplay(weatherdata){
 
@@ -232,7 +238,6 @@ function updateDisplay(weatherdata){
   
   }
 
-
 getCurrentTime(weatherdata)
 getWasser_c(weatherdata)
 getWasser_nn(weatherdata)
@@ -240,6 +245,7 @@ getWunderground(weatherdata)
 printweather(weatherdata)
 
 // Get Current Time and Update Display every 10 seconds
+
 setInterval(function(){
   getCurrentTime(weatherdata)
   printweather(weatherdata)
@@ -253,7 +259,7 @@ setInterval(function(){
 
 // Get Current Weather and Update Display every 30 minutes
 setInterval(function(){
-    getWasser_c(weatherdata)
+   getWasser_c(weatherdata)
     getWasser_nn(weatherdata)
 },1800000)
 
