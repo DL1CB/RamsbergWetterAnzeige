@@ -20,9 +20,6 @@ weatherdata =  {
     wasser_nn : '0000'
 }
 
-
-
-
 function printweather(weatherdata){
 
     console.log(asciitable([
@@ -73,7 +70,7 @@ function getWasser_c(weatherdata) {
         console.log(error);
       } else {
   
-        if(true){ 
+        if(data){ 
           wasser_c = data.value
           wasser_c = wasser_c.replace(',','.')
           wasser_c = Number(wasser_c)
@@ -108,32 +105,32 @@ function getWasser_nn(weatherdata) {
     function (error, data) {
   
     if (error) {
-  
-        console.log(error);
+          console.log(error);
       } else {
+        if(data) {
+            wasser_nn = data.value
+            wasser_nn = wasser_nn.replace(',','.')
+            wasser_nn = Number(wasser_nn)
+            wasser_nn = Math.abs(wasser_nn)
+            wasser_nn = Math.round(wasser_nn)
+            wasser_nn = wasser_nn.toString()
+            wasser_nn = wasser_nn.substr(0,3)
       
-        wasser_nn = data.value
-        wasser_nn = wasser_nn.replace(',','.')
-        wasser_nn = Number(wasser_nn)
-        wasser_nn = Math.abs(wasser_nn)
-        wasser_nn = Math.round(wasser_nn)
-        wasser_nn = wasser_nn.toString()
-        wasser_nn = wasser_nn.substr(0,3)
-  
-        if(wasser_nn.length < 2){
-          wasser_nn = '   '+wasser_nn
+            if(wasser_nn.length < 2){
+              wasser_nn = '   '+wasser_nn
+            }
+      
+            if(wasser_nn.length < 3){
+              wasser_nn = '  '+wasser_nn
+            }
+      
+            if(wasser_nn.length < 4){
+              wasser_nn = ' '+wasser_nn
+            }
+      
+            //console.log('wasser_nn',wasser_nn)
+            weatherdata.wasser_nn = wasser_nn
         }
-  
-        if(wasser_nn.length < 3){
-          wasser_nn = '  '+wasser_nn
-        }
-  
-        if(wasser_nn.length < 4){
-          wasser_nn = ' '+wasser_nn
-        }
-  
-        //console.log('wasser_nn',wasser_nn)
-        weatherdata.wasser_nn = wasser_nn
       }
     });
 }
