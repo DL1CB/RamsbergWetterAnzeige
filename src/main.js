@@ -70,7 +70,7 @@ function getWasser_c(weatherdata) {
         console.log(error);
       } else {
   
-        if(data){ 
+        if(data && data.value){ 
           wasser_c = data.value
           wasser_c = wasser_c.replace(',','.')
           wasser_c = Number(wasser_c)
@@ -84,11 +84,14 @@ function getWasser_c(weatherdata) {
           if(wasser_c.length < 2){
             wasser_c = ' '+wasser_c
           }
+
+
+          //console.log('wasser_c',wasser_c)
+          weatherdata.wasser_c = wasser_c
+
         }
   
-        //console.log('wasser_c',wasser_c)
 
-        weatherdata.wasser_c = wasser_c
 
       }
     });
@@ -107,7 +110,7 @@ function getWasser_nn(weatherdata) {
     if (error) {
           console.log(error);
       } else {
-        if(data) {
+        if(data && data-value) {
             wasser_nn = data.value
             wasser_nn = wasser_nn.replace(',','.')
             wasser_nn = Number(wasser_nn)
