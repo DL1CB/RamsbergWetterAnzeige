@@ -110,7 +110,7 @@ function getWasser_nn(weatherdata) {
     if (error) {
           console.log(error);
       } else {
-        if(data && data-value) {
+        if(data && data.value) {
             wasser_nn = data.value
             wasser_nn = wasser_nn.replace(',','.')
             wasser_nn = Number(wasser_nn)
