@@ -138,6 +138,84 @@ function getWasser_nn(weatherdata) {
     });
 }
 
+
+function getBayernWebcam(weatherdata) {
+
+  scrape ('https://www.wwa-an.bayern.de/webcam', 
+
+  {  
+    temp_c: { el: '#webcamdata > div:nth(2)' },  
+    windspeed: { el: '#webcamdata > div:nth(4)' },  
+    winddirection: { el: '#webcamdata > div:nth(8)' }
+  }, 
+
+  function (error, data) {
+
+    if (error) {
+
+      console.log(error);
+      preventScrapewebcam = false
+    
+    } else {
+
+      temp_c = data.temp_c
+      temp_c = temp_c.substr(0,(temp_c.length-3))
+      temp_c = Number(temp_c)
+      temp_c = Math.abs(temp_c)
+      temp_c = Math.round(temp_c)
+      temp_c = temp_c.toString()
+      temp_c = temp_c.substr(0,2)
+
+      // correct temp_c to 2 characters
+      if(temp_c.length < 2){
+        temp_c = ' '+temp_c
+      }
+
+      weatherdata.temp_c = temp_c
+            
+      wind_mps = data.windspeed
+      wind_mps = wind_mps.substr(0,(wind_mps.length-3))
+
+      var kmhLimits = [2,3.5,5.6,8.2,11.3,14.4,17.5,21,24.6,28.8,32.9];
+      wind_beaufort = kmhLimits.reduce(function(previousValue, currentValue, index, array) {
+        return previousValue + (wind_mps > currentValue ? 1 : 0);
+      },0);
+
+      wind_beaufort = Number(wind_beaufort)
+      wind_beaufort = Math.abs(wind_beaufort)
+      wind_beaufort = Math.round(wind_beaufort)
+      wind_beaufort = wind_beaufort.toString()
+      wind_beaufort = wind_beaufort.substr(0,3)
+
+      if(wind_beaufort.length < 2){
+        wind_beaufort = ' '+wind_beaufort
+      }
+
+      weatherdata.wind_beaufort = wind_beaufort
+
+
+      wind_degrees = data.winddirection
+        
+      wind_degrees = wind_degrees.substr(0,(wind_degrees.length-1))
+
+      wind_degrees = Number(wind_degrees)
+
+      // correct wind_degrees
+      if(wind_degrees < 0){
+        wind_degrees=0
+      }
+
+      // convert wind_degrees to wind_dir
+      var val = Math.floor((wind_degrees / 22.5) + 0.5);
+      var arr = [" N", "NO", "NO", "NO", " O", "SO", "SO", "SO", " S", "SW", "SW", "SW", " W", "NW", "NW", "NW"];
+      wind_dir = arr[(val % 16)];
+      
+      weatherdata.wind_dir = wind_dir
+
+    }
+  });
+}
+
 function getWunderground(weatherdata){
 
   var url = 'http://api.weather.com/v2/pws/observations/current?stationId=IPLEINFE4&format=json&units=m&apiKey=876777051d264fe8a777051d263fe850'
@@ -157,7 +235,7 @@ function getWunderground(weatherdata){
           temp_c = observation.metric.temp
           pressure_mb = String(observation.metric.pressure).substr(0,4)
 
-          
+
           if(wind_degrees < 0){
             wind_degrees=0
           }
@@ -169,7 +247,6 @@ function getWunderground(weatherdata){
     
           weatherdata.wind_dir = wind_dir
       
-          
           if(wind_kph < 0 || wind_kph == undefined) return 0;
     
           // conversion kph to beaufort scale
@@ -241,7 +318,8 @@ function updateDisplay(weatherdata){
 getCurrentTime(weatherdata)
 getWasser_c(weatherdata)
 getWasser_nn(weatherdata)
-getWunderground(weatherdata)
+getBayernWebcam(weatherdata)
+//getWunderground(weatherdata)
 printweather(weatherdata)
 
 // Get Current Time and Update Display every 10 seconds
@@ -254,12 +332,13 @@ setInterval(function(){
 
 // Get Current Weather and Update Display every 3 minutes
 setInterval(function(){
-    getWunderground(weatherdata)
+  getBayernWebcam(weatherdata)
+  //getWunderground(weatherdata)
 },180000)
 
 // Get Current Weather and Update Display every 30 minutes
 setInterval(function(){
    getWasser_c(weatherdata)
-    getWasser_nn(weatherdata)
+   getWasser_nn(weatherdata)
 },1800000)
 
